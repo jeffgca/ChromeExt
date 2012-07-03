@@ -104,16 +104,20 @@
 			sm.appendChild(createSubMenu(label));
 		}
 		
+		function labelClicked(label) {
+			var array = getBookmarksForLabel(label)
+
+			for (var i = 0; i < array.length; i++) {
+				chrome.tabs.create({url: array[i].url});
+			}
+			window.close();
+		}
+
 		function pairSort(a, b) {
 			return a.title.toLowerCase().localeCompare(b.title.toLowerCase());
 		}
-		
-		function createSubMenu(label) {
-			table = document.createElement("table");
-			table.setAttribute("id", "subtable");
-			table.setAttribute("style", tablestyle);
-			table.setAttribute("cellspacing", "0");
-			table.setAttribute("cellpadding", "0");
+
+		function getBookmarksForLabel(label) {
 			var nodes = xml.getElementsByTagName("bookmark");
 			
 			var array = new Array();
@@ -142,7 +146,17 @@
 				}
 			}
 			
-			array = array.sort(pairSort);
+			return array.sort(pairSort);
+		}		
+
+		function createSubMenu(label) {
+			table = document.createElement("table");
+			table.setAttribute("id", "subtable");
+			table.setAttribute("style", tablestyle);
+			table.setAttribute("cellspacing", "0");
+			table.setAttribute("cellpadding", "0");
+
+			var array = getBookmarksForLabel(label)
 
 			for (var i = 0; i < array.length; i++) {
 				tr = document.createElement("tr");
@@ -160,7 +174,7 @@
 		}
 		
 		function mouseDownLabelText(label) {
-			return "onMouseOver=\"labelSelection('" + label + "')\"";
+			return "onMouseOver=\"labelSelection('" + label + "')\" onMouseDown=\"labelClicked('" + label + "')\"";
 		}
 
 		function mouseDownBookmarkText(url) {
