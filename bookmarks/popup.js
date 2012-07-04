@@ -3,7 +3,7 @@ var xhr = new XMLHttpRequest();
 var xml;
 var style = "font-family:Arial;font-size:12;color:black;cursor:default";
 var debgcolor = 'white';
-var divstyle = "overflow:auto;height:350;width:220;background-color:" + debgcolor;
+var divstyle = "overflow:auto;width:220;background-color:" + debgcolor;
 var tablestyle = "border-style:groove;border-color:lightgrey;width:200";
 
 function blue(event) {
@@ -34,8 +34,8 @@ function displayBookmarks() {
 function useBookmarks() {
 	if (xhr.readyState == 4) {
 		xml = xhr.responseXML.documentElement;
-		document.write("<table><tr><td><div style=\"" + divstyle + "\"><table cellspacing=0 cellpadding=0 style=\"" + tablestyle + "\">");
-		menuItem("Add Bookmark", mouseDownAddText, "", "", true);
+		document.write("<table><tr valign=\"top\"><td><div style=\"" + divstyle + "\"><table cellspacing=0 cellpadding=0 style=\"" + tablestyle + "\">");
+		menuItem("Add Bookmark", mouseDownAddText, null, "", true);
 		getLabels(xml);
 		getBookmarksWOLabels(xml);
 		document.write("</table></div></td><td><div id=\"submenu\" style=\"" + divstyle + "\"></div></td></tr></table>");
@@ -73,25 +73,25 @@ function getLabels(xml) {
 }
 
 function getBookmarksWOLabels(xml) {
-		var nodes = xml.getElementsByTagName("bookmark");
-		for (var i = 0; i < nodes.length; ++i) {
-			var label = nodes[i].getElementsByTagName("label");
-			var title = nodes[i].getElementsByTagName("title");
-			var url = nodes[i].getElementsByTagName("url");
-			if (!url.length) {
-				continue;
-			}
-			var	urlt = url[0].firstChild.nodeValue;
-			var titlet;
-			if (title.length) {
-				titlet = title[0].firstChild.nodeValue;
-			} else {
-				titlet = urlt;
-			}
-			if (label[0] == null) {
-				menuItem(titlet, mouseDownBookmarkText, urlt, "", false);						
-			}
+	var nodes = xml.getElementsByTagName("bookmark");
+	for (var i = 0; i < nodes.length; ++i) {
+		var label = nodes[i].getElementsByTagName("label");
+		var title = nodes[i].getElementsByTagName("title");
+		var url = nodes[i].getElementsByTagName("url");
+		if (!url.length) {
+			continue;
 		}
+		var urlt = url[0].firstChild.nodeValue;
+		var titlet;
+		if (title.length) {
+			titlet = title[0].firstChild.nodeValue;
+		} else {
+			titlet = urlt;
+		}
+		if (label[0] == null) {
+			menuItem(titlet, mouseDownBookmarkText, urlt, "", false);
+		}
+	}
 }
 
 function bookmarkSelection(event, par) {
@@ -100,7 +100,7 @@ function bookmarkSelection(event, par) {
 }
 
 function labelSelection(event, par) {
-	setBgColor(event.target, true);
+	blue(event);
 	sm = document.getElementById("submenu");
 	j = document.getElementById("subtable");
 	if (j != null) {
@@ -124,10 +124,9 @@ function pairSort(a, b) {
 
 function getBookmarksForLabel(label) {
 	var nodes = xml.getElementsByTagName("bookmark");
-	
 	var array = new Array();
 	var ind = 0;
-	
+
 	for (var i = 0; i < nodes.length; ++i) {
 		var l = nodes[i].getElementsByTagName("label");
 		for (var j = 0; j < l.length; ++j) {
@@ -144,7 +143,6 @@ function getBookmarksForLabel(label) {
 				} else {
 					pair.title = pair.url;
 				}
-				
 				array[ind++] = pair;
 				break;
 			}
@@ -152,14 +150,6 @@ function getBookmarksForLabel(label) {
 	}
 	
 	return array.sort(pairSort);
-}		
-
-function rightBookmarkClick(event) {
-	var obj = event.target;
-	while (obj.tagName.toLowerCase() != "tr") {
-		obj = obj.parentNode;
-	}
-	bookmarkSelection(event, obj.getAttribute("my_url"));
 }
 
 function createSubMenu(label) {
@@ -174,10 +164,8 @@ function createSubMenu(label) {
 	for (var i = 0; i < array.length; ++i) {
 		tr = document.createElement("tr");
 		tr.setAttribute("style", style);
-		tr.setAttribute("my_url", array[i].url);
-		tr.addEventListener("mouseover", blue);
+		mouseDownBookmarkText(tr, array[i].url);
 		tr.addEventListener("mouseout", white);
-		tr.addEventListener("click", rightBookmarkClick);
 		td = document.createElement("td");
 		text = document.createTextNode(array[i].title);
 		td.appendChild(text);
@@ -204,8 +192,7 @@ function mouseDownAddText(item, par) {
 
 function menuItem(title, mousefunc, mouseparam, separator, lineseparator) {
 	var ret = "<tr ";
-	ret += "style=" + style + " ";
-	ret += "id='" + title + "' ";
+	ret += "style=" + style + " id='" + title + "' ";
 	ret += "><td>" + title + "</td><td>" + separator +"</td></tr>";
 	if (lineseparator) {
 		ret += "<tr style=\"background-color:black;font-size:1\"><td><br></td><td></td></tr>";
