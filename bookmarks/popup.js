@@ -2,13 +2,22 @@ var bookmarksXML = "http://www.google.com/bookmarks/?output=xml&num=100000";
 var xhr = new XMLHttpRequest();
 var xml;
 var style = "font-family:Arial;font-size:12;color:black;cursor:default";
-var blue = "setBgColor(this, true)";
-var white = "setBgColor(this, false)";
 var debgcolor = 'white';
 var divstyle = "overflow:auto;height:350;width:220;background-color:" + debgcolor;
 var tablestyle = "border-style:groove;border-color:lightgrey;width:200";
 
+function blue(event) {
+	setBgColor(event.target, true);
+}
+
+function white(event) {
+	setBgColor(event.target, false);
+}
+
 function setBgColor(obj, on) {
+	while (obj.tagName.toLowerCase() != "tr") {
+		obj = obj.parentNode;
+	}
 	var color = debgcolor;
 	if (on) {
 		color = 'lightblue';
@@ -26,7 +35,7 @@ function useBookmarks() {
 	if (xhr.readyState == 4) {
 		xml = xhr.responseXML.documentElement;
 		document.write("<table><tr><td><div style=\"" + divstyle + "\"><table cellspacing=0 cellpadding=0 style=\"" + tablestyle + "\">");
-		document.write(menuItem("Add Bookmark", mouseDownAddText, "", "", false, true));
+		menuItem("Add Bookmark", mouseDownAddText, "", "", true);
 		getLabels(xml);
 		getBookmarksWOLabels(xml);
 		document.write("</table></div></td><td><div id=\"submenu\" style=\"" + divstyle + "\"></div></td></tr></table>");
@@ -40,10 +49,10 @@ function localesort(str1, str2) {
 function getLabels(xml) {
 	var array = new Array();
 	var nodes = xml.getElementsByTagName("label");
-	for (var i = 0; i < nodes.length; i++) {
+	for (var i = 0; i < nodes.length; ++i) {
 		var label = nodes[i].firstChild.nodeValue;
 		if (label != null) {
-			for (var j = 0; j < array.length; j++) {
+			for (var j = 0; j < array.length; ++j) {
 				if (array[j] == label) {
 					break;
 				}
@@ -55,17 +64,17 @@ function getLabels(xml) {
 	}
 	array = array.sort(localesort)
 	var linesep = false;
-	for (var i = 0; i < array.length; i++) {
+	for (var i = 0; i < array.length; ++i) {
 		if (i == array.length - 1) {
 			linesep = true;
 		}
-		document.write(menuItem(array[i], mouseDownLabelText, array[i], ">", true, linesep));
+		menuItem(array[i], mouseDownLabelText, array[i], ">", linesep);
 	}
 }
 
 function getBookmarksWOLabels(xml) {
 		var nodes = xml.getElementsByTagName("bookmark");
-		for (var i = 0; i < nodes.length; i++) {
+		for (var i = 0; i < nodes.length; ++i) {
 			var label = nodes[i].getElementsByTagName("label");
 			var title = nodes[i].getElementsByTagName("title");
 			var url = nodes[i].getElementsByTagName("url");
@@ -80,30 +89,30 @@ function getBookmarksWOLabels(xml) {
 				titlet = urlt;
 			}
 			if (label[0] == null) {
-				document.write(menuItem(titlet, mouseDownBookmarkText, urlt, "", false, false));						
+				menuItem(titlet, mouseDownBookmarkText, urlt, "", false);						
 			}
 		}
 }
 
-function bookmarkSelection(url) {
-	chrome.tabs.create({url: url});
+function bookmarkSelection(event, par) {
+	chrome.tabs.create({url: par});
 	window.close();
 }
 
-function labelSelection(label) {
-	setBgColor(document.getElementById(label), true);
+function labelSelection(event, par) {
+	setBgColor(event.target, true);
 	sm = document.getElementById("submenu");
 	j = document.getElementById("subtable");
 	if (j != null) {
 		sm.removeChild(j);
 	}
-	sm.appendChild(createSubMenu(label));
+	sm.appendChild(createSubMenu(par));
 }
 
-function labelClicked(label) {
-	var array = getBookmarksForLabel(label)
+function labelClicked(event, par) {
+	var array = getBookmarksForLabel(par)
 
-	for (var i = 0; i < array.length; i++) {
+	for (var i = 0; i < array.length; ++i) {
 		chrome.tabs.create({url: array[i].url});
 	}
 	window.close();
@@ -119,9 +128,9 @@ function getBookmarksForLabel(label) {
 	var array = new Array();
 	var ind = 0;
 	
-	for (var i = 0; i < nodes.length; i++) {
+	for (var i = 0; i < nodes.length; ++i) {
 		var l = nodes[i].getElementsByTagName("label");
-		for (var j = 0; j < l.length; j++) {
+		for (var j = 0; j < l.length; ++j) {
 			if (l[j].firstChild.nodeValue == label) {
 				var title = nodes[i].getElementsByTagName("title");
 				var url = nodes[i].getElementsByTagName("url");
@@ -154,14 +163,15 @@ function createSubMenu(label) {
 
 	var array = getBookmarksForLabel(label)
 
-	for (var i = 0; i < array.length; i++) {
+	for (var i = 0; i < array.length; ++i) {
 		tr = document.createElement("tr");
 		tr.setAttribute("style", style);
-		tr.setAttribute("onMouseOver", blue);
-		tr.setAttribute("onMouseOut", white);
-		tr.setAttribute("onMouseDown", "bookmarkSelection('" + array[i].url + "')");
+		tr.addEventListener("mouseover", blue);
+		tr.addEventListener("mouseout", white);
+		var item = array[i];
+		tr.addEventListener("click", function(event) {var p = item.url; bookmarkSelection(event, p)});
 		td = document.createElement("td");
-		text = document.createTextNode(array[i].title);
+		text = document.createTextNode(item.title);
 		td.appendChild(text);
 		tr.appendChild(td);
 		table.appendChild(tr);
@@ -169,29 +179,33 @@ function createSubMenu(label) {
 	return table;
 }
 
-function mouseDownLabelText(label) {
-	return "onMouseOver=\"labelSelection('" + label + "')\" onMouseDown=\"labelClicked('" + label + "')\"";
+function mouseDownLabelText(item, par) {
+	item.addEventListener("mouseover", function(event) {var p = par; labelSelection(event, p)});
+	item.addEventListener("click", function(event) {var p = par; labelClicked(event, p)});
 }
 
-function mouseDownBookmarkText(url) {
-	return "onMouseOver=\"" + blue + "\" onMouseDown=\"bookmarkSelection('" + url + "')\"";
+function mouseDownBookmarkText(item, par) {
+	item.addEventListener("mouseover", blue);
+	item.addEventListener("click", function(event) {var p = par; bookmarkSelection(event, p)});
 }
 
-function mouseDownAddText(dummy) {
-	return "onMouseOver=\"" + blue + "\" onMouseDown=\"addBookmark()\"";
+function mouseDownAddText(item, par) {
+	item.addEventListener("mouseover", blue);
+	item.addEventListener("click", addBookmark);
 }
 
-function menuItem(title, mousefunc, mouseparam, separator, useId, lineseparator) {
+function menuItem(title, mousefunc, mouseparam, separator, lineseparator) {
 	var ret = "<tr ";
 	ret += "style=" + style + " ";
-	if (useId) {
-		ret += "id='" + title + "' ";
-	}
-	ret += "onMouseOut=\"" + white + "\" " + mousefunc(mouseparam) + "><td>" + title + "</td><td>" + separator +"</td></tr>";
+	ret += "id='" + title + "' ";
+	ret += "><td>" + title + "</td><td>" + separator +"</td></tr>";
 	if (lineseparator) {
 		ret += "<tr style=\"background-color:black;font-size:1\"><td><br></td><td></td></tr>";
 	}
-	return ret;
+	document.write(ret);
+	var item = document.getElementById(title);
+	mousefunc(item, mouseparam);
+	item.addEventListener("mouseout", white);
 }
 
 function addCallback(tab) {
