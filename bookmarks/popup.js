@@ -154,6 +154,14 @@ function getBookmarksForLabel(label) {
 	return array.sort(pairSort);
 }		
 
+function rightBookmarkClick(event) {
+	var obj = event.target;
+	while (obj.tagName.toLowerCase() != "tr") {
+		obj = obj.parentNode;
+	}
+	bookmarkSelection(event, obj.getAttribute("my_url"));
+}
+
 function createSubMenu(label) {
 	table = document.createElement("table");
 	table.setAttribute("id", "subtable");
@@ -166,12 +174,12 @@ function createSubMenu(label) {
 	for (var i = 0; i < array.length; ++i) {
 		tr = document.createElement("tr");
 		tr.setAttribute("style", style);
+		tr.setAttribute("my_url", array[i].url);
 		tr.addEventListener("mouseover", blue);
 		tr.addEventListener("mouseout", white);
-		var item = array[i];
-		tr.addEventListener("click", function(event) {var p = item.url; bookmarkSelection(event, p)});
+		tr.addEventListener("click", rightBookmarkClick);
 		td = document.createElement("td");
-		text = document.createTextNode(item.title);
+		text = document.createTextNode(array[i].title);
 		td.appendChild(text);
 		tr.appendChild(td);
 		table.appendChild(tr);
@@ -180,13 +188,13 @@ function createSubMenu(label) {
 }
 
 function mouseDownLabelText(item, par) {
-	item.addEventListener("mouseover", function(event) {var p = par; labelSelection(event, p)});
-	item.addEventListener("click", function(event) {var p = par; labelClicked(event, p)});
+	item.addEventListener("mouseover", function(event) {labelSelection(event, par)});
+	item.addEventListener("click", function(event) {labelClicked(event, par)});
 }
 
 function mouseDownBookmarkText(item, par) {
 	item.addEventListener("mouseover", blue);
-	item.addEventListener("click", function(event) {var p = par; bookmarkSelection(event, p)});
+	item.addEventListener("click", function(event) {bookmarkSelection(event, par)});
 }
 
 function mouseDownAddText(item, par) {
