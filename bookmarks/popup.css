@@ -1,0 +1,44 @@
+tr.inner {
+	font-family: Arial;
+	font-size: 12px;
+	color: black;
+	cursor: default;
+	vertical-align: middle;
+}
+
+tr.sep {
+	background-color:black;
+	font-size:1px;
+}
+
+div.inner {
+	overflow: auto;
+	width: 260px;
+	background-color: white;
+}
+
+img {
+	width: 16px;
+	height: 16px;
+}
+
+table.inner {
+	border-style: groove;
+	border-color: lightgrey;
+	width: 240px;
+	padding: 0px;
+	border-spacing: 0px;
+}
+
+td {
+	padding: 0px;
+}
+
+td.img {
+	vertical-align: top;
+	width: 18px;
+}
+
+tr {
+	vertical-align: top;
+}
