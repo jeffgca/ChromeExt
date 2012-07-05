@@ -2,6 +2,10 @@ var bookmarksXML = "http://www.google.com/bookmarks/?output=xml&num=100000";
 var xml;
 var favicon = "chrome://favicon/"
 
+function getFavIcon(url) {
+	return favicon + url;
+}
+
 function blue(event) {
 	setBgColor(event.target, true);
 }
@@ -45,7 +49,7 @@ function useBookmarks() {
 		div.appendChild(table);
 		table.setAttribute("class", "inner");
 
-		menuItem(table, "Add Bookmark", mouseDownAddText, null, "", true, favicon + bookmarksXML);
+		menuItem(table, "Add Bookmark", mouseDownAddText, null, "", true, getFavIcon("http://www.google.com"));
 		getLabels(xml, table);
 		getBookmarksWOLabels(xml, table);
 
@@ -105,7 +109,7 @@ function getBookmarksWOLabels(xml, table) {
 			titlet = urlt;
 		}
 		if (label[0] == null) {
-			menuItem(table, titlet, mouseDownBookmarkText, urlt, "", false, favicon + urlt);
+			menuItem(table, titlet, mouseDownBookmarkText, urlt, "", false, getFavIcon(urlt));
 		}
 	}
 }
@@ -184,7 +188,7 @@ function createSubMenu(label) {
 		var td = document.createElement("td");
 		td.setAttribute("class", "img");
 		var img = document.createElement("img");
-		img.setAttribute("src", favicon + array[i].url);
+		img.setAttribute("src", getFavIcon(array[i].url));
 		td.appendChild(img);
 		tr.appendChild(td);
 
