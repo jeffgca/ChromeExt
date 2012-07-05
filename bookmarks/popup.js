@@ -4,6 +4,7 @@ var style = "font-family:Arial;font-size:12;color:black;cursor:default";
 var debgcolor = 'white';
 var divstyle = "overflow:auto;width:220;background-color:" + debgcolor;
 var tablestyle = "border-style:groove;border-color:lightgrey;width:200";
+var favicon = "chrome://favicon/"
 
 function blue(event) {
 	setBgColor(event.target, true);
@@ -35,7 +36,7 @@ function useBookmarks() {
 	if (this.readyState == this.DONE) {
 		xml = this.responseXML.documentElement;
 		document.write("<table><tr valign=\"top\"><td><div style=\"" + divstyle + "\"><table cellspacing=0 cellpadding=0 style=\"" + tablestyle + "\">");
-		menuItem("Add Bookmark", mouseDownAddText, null, "", true);
+		menuItem("Add Bookmark", mouseDownAddText, null, "", true, favicon + "http://www.google.com");
 		getLabels(xml);
 		getBookmarksWOLabels(xml);
 		document.write("</table></div></td><td><div id=\"submenu\" style=\"" + divstyle + "\"></div></td></tr></table>");
@@ -68,7 +69,7 @@ function getLabels(xml) {
 		if (i == array.length - 1) {
 			linesep = true;
 		}
-		menuItem(array[i], mouseDownLabelText, array[i], ">", linesep);
+		menuItem(array[i], mouseDownLabelText, array[i], ">", linesep, "folder.png");
 	}
 }
 
@@ -89,7 +90,7 @@ function getBookmarksWOLabels(xml) {
 			titlet = urlt;
 		}
 		if (label[0] == null) {
-			menuItem(titlet, mouseDownBookmarkText, urlt, "", false);
+			menuItem(titlet, mouseDownBookmarkText, urlt, "", false, favicon + urlt);
 		}
 	}
 }
@@ -164,12 +165,23 @@ function createSubMenu(label) {
 	for (var i = 0; i < array.length; ++i) {
 		tr = document.createElement("tr");
 		tr.setAttribute("style", style);
+		tr.setAttribute("valign", "top");
 		mouseDownBookmarkText(tr, array[i].url);
 		tr.addEventListener("mouseout", white);
+
+		td = document.createElement("td");
+		img = document.createElement("img");
+		img.setAttribute("src", favicon + array[i].url);
+		img.style.width = "16px";
+		img.style.height = "16px";
+		td.appendChild(img);
+		tr.appendChild(td);
+
 		td = document.createElement("td");
 		text = document.createTextNode(array[i].title);
 		td.appendChild(text);
 		tr.appendChild(td);
+
 		table.appendChild(tr);
 	}
 	return table;
@@ -190,11 +202,12 @@ function mouseDownAddText(item, par) {
 	item.addEventListener("click", addBookmark);
 }
 
-function menuItem(title, mousefunc, mouseparam, separator, lineseparator) {
+function menuItem(title, mousefunc, mouseparam, separator, lineseparator, imgsrc) {
 	var ret = "<tr style=" + style + " id='" + title + "' ><td>";
+	ret += "<img src=" + imgsrc + " style=width:16px;height:16px /></td><td>"
 	ret += title + "</td><td>" + separator +"</td></tr>";
 	if (lineseparator) {
-		ret += "<tr style=\"background-color:black;font-size:1\"><td><br></td><td></td></tr>";
+		ret += "<tr style=\"background-color:black;font-size:1\"><td><br></td><td></td><td></td></tr>";
 	}
 	document.write(ret);
 	var item = document.getElementById(title);
