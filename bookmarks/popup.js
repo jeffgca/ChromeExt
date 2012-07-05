@@ -1,5 +1,4 @@
 var bookmarksXML = "http://www.google.com/bookmarks/?output=xml&num=100000";
-var xhr = new XMLHttpRequest();
 var xml;
 var style = "font-family:Arial;font-size:12;color:black;cursor:default";
 var debgcolor = 'white';
@@ -26,14 +25,15 @@ function setBgColor(obj, on) {
 }
 
 function displayBookmarks() {
+	var xhr = new XMLHttpRequest();
 	xhr.open("GET", bookmarksXML, true);
 	xhr.onreadystatechange = useBookmarks;
-	xhr.send(null);
+	xhr.send();
 }
 
 function useBookmarks() {
-	if (xhr.readyState == 4) {
-		xml = xhr.responseXML.documentElement;
+	if (this.readyState == this.DONE) {
+		xml = this.responseXML.documentElement;
 		document.write("<table><tr valign=\"top\"><td><div style=\"" + divstyle + "\"><table cellspacing=0 cellpadding=0 style=\"" + tablestyle + "\">");
 		menuItem("Add Bookmark", mouseDownAddText, null, "", true);
 		getLabels(xml);
@@ -191,9 +191,8 @@ function mouseDownAddText(item, par) {
 }
 
 function menuItem(title, mousefunc, mouseparam, separator, lineseparator) {
-	var ret = "<tr ";
-	ret += "style=" + style + " id='" + title + "' ";
-	ret += "><td>" + title + "</td><td>" + separator +"</td></tr>";
+	var ret = "<tr style=" + style + " id='" + title + "' ><td>";
+	ret += title + "</td><td>" + separator +"</td></tr>";
 	if (lineseparator) {
 		ret += "<tr style=\"background-color:black;font-size:1\"><td><br></td><td></td></tr>";
 	}
