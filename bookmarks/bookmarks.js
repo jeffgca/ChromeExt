@@ -32,9 +32,9 @@ function displayBookmarks() {
 	xhr.send();
 }
 
-function useBookmarks() {
-	if (this.readyState == this.DONE) {
-		xml = this.responseXML.documentElement;
+function useBookmarks(xhr) {
+	if (xhr.target.readyState == xhr.target.DONE) {
+		xml = xhr.target.responseXML.documentElement;
 		var div = document.getElementById("towrite");
 		var table = document.createElement("table");
 		div.appendChild(table);
@@ -63,26 +63,23 @@ function useBookmarks() {
 }
 
 function localesort(str1, str2) {
-	return str1.toLowerCase().localeCompare(str2.toLowerCase())
+	return str1.toLowerCase().localeCompare(str2.toLowerCase());
 }
 
 function getLabels(xml, table) {
-	var array = new Array();
+	var set = {};
 	var nodes = xml.getElementsByTagName("label");
 	for (var i = 0; i < nodes.length; ++i) {
 		var label = nodes[i].firstChild.nodeValue;
 		if (label != null) {
-			for (var j = 0; j < array.length; ++j) {
-				if (array[j] == label) {
-					break;
-				}
-			}
-			if (j == array.length) {
-				array[j] = label;
-			}
+			set[label] = true;
 		}
 	}
-	array = array.sort(localesort)
+	var array = [];
+	for (key in set) {
+		array.push(key);
+	}
+	array = array.sort(localesort);
 	var linesep = false;
 	for (var i = 0; i < array.length; ++i) {
 		if (i == array.length - 1) {
@@ -96,19 +93,19 @@ function getBookmarksWOLabels(xml, table) {
 	var nodes = xml.getElementsByTagName("bookmark");
 	for (var i = 0; i < nodes.length; ++i) {
 		var label = nodes[i].getElementsByTagName("label");
-		var title = nodes[i].getElementsByTagName("title");
-		var url = nodes[i].getElementsByTagName("url");
-		if (!url.length) {
-			continue;
-		}
-		var urlt = url[0].firstChild.nodeValue;
-		var titlet;
-		if (title.length) {
-			titlet = title[0].firstChild.nodeValue;
-		} else {
-			titlet = urlt;
-		}
 		if (label[0] == null) {
+			var title = nodes[i].getElementsByTagName("title");
+			var url = nodes[i].getElementsByTagName("url");
+			if (!url.length) {
+				continue;
+			}
+			var urlt = url[0].firstChild.nodeValue;
+			var titlet;
+			if (title.length) {
+				titlet = title[0].firstChild.nodeValue;
+			} else {
+				titlet = urlt;
+			}
 			menuItem(table, titlet, mouseDownBookmarkText, urlt, "", false, getFavIcon(urlt));
 		}
 	}
@@ -130,7 +127,7 @@ function labelSelection(event, par) {
 }
 
 function labelClicked(event, par) {
-	var array = getBookmarksForLabel(par)
+	var array = getBookmarksForLabel(par);
 
 	for (var i = 0; i < array.length; ++i) {
 		chrome.tabs.create({url: array[i].url});
@@ -144,26 +141,25 @@ function pairSort(a, b) {
 
 function getBookmarksForLabel(label) {
 	var nodes = xml.getElementsByTagName("bookmark");
-	var array = new Array();
-	var ind = 0;
+	var array = [];
 
 	for (var i = 0; i < nodes.length; ++i) {
 		var l = nodes[i].getElementsByTagName("label");
 		for (var j = 0; j < l.length; ++j) {
 			if (l[j].firstChild.nodeValue == label) {
-				var title = nodes[i].getElementsByTagName("title");
 				var url = nodes[i].getElementsByTagName("url");
-				var pair = new Object();
 				if (!url.length) {
 					continue;
 				}
+				var pair = {};
 				pair.url = url[0].firstChild.nodeValue;
+				var title = nodes[i].getElementsByTagName("title");
 				if (title.length) {
 					pair.title = title[0].firstChild.nodeValue;
 				} else {
 					pair.title = pair.url;
 				}
-				array[ind++] = pair;
+				array.push(pair);
 				break;
 			}
 		}
