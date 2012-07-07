@@ -15,6 +15,7 @@ div.inner {
 	overflow: auto;
 	width: 260px;
 	background-color: white;
+	max-height: 500px;
 }
 
 img {
