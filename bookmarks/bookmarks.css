@@ -6,11 +6,6 @@ tr.inner {
 	vertical-align: middle;
 }
 
-tr.sep {
-	background-color: black;
-	font-size: 1px;
-}
-
 div.inner {
 	overflow: auto;
 	width: 260px;
@@ -34,6 +29,10 @@ table.inner {
 
 td {
 	padding: 0px;
+}
+
+td.sep {
+	border-bottom: groove lightgrey;
 }
 
 td.img {

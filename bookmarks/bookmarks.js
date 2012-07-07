@@ -213,33 +213,31 @@ function mouseDownAddText(item, par) {
 }
 
 function menuItem(table, title, mousefunc, mouseparam, separator, lineseparator, imgsrc) {
+	var tdclass = "";
+	var tdimgclass = "img";
+	if (lineseparator) {
+		tdclass += "sep";
+		tdimgclass += " sep";
+	}
 	var tr = document.createElement("tr");
 	tr.setAttribute("class", "inner");
 	table.appendChild(tr);
 	var td = document.createElement("td");
 	tr.appendChild(td);
-	td.setAttribute("class", "img");
+	td.setAttribute("class", tdimgclass);
 	var img = document.createElement("img");
 	td.appendChild(img);
 	img.setAttribute("src", imgsrc);
 	td = document.createElement("td");
 	tr.appendChild(td);
+	td.setAttribute("class", tdclass);
 	td.appendChild(document.createTextNode(title));
 	td = document.createElement("td");
 	tr.appendChild(td);
+	td.setAttribute("class", tdclass);
 	td.appendChild(document.createTextNode(separator));
 	mousefunc(tr, mouseparam);
 	tr.addEventListener("mouseout", white);
-	if (lineseparator) {
-		tr = document.createElement("tr");
-		table.appendChild(tr);
-		tr.setAttribute("class", "sep");
-		td = document.createElement("td");
-		td.appendChild(document.createElement("br"));
-		tr.appendChild(td);
-		tr.appendChild(document.createElement("td"));
-		tr.appendChild(document.createElement("td"));
-	}
 }
 
 function addCallback(tab) {
