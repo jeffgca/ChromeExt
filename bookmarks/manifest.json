@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Bookmark tree to use with Google Bookmarks™",
-  "version": "0.15",
+  "version": "0.16",
   "description": "Provides convenient access to Google Bookmarks™.",
   "browser_action": {
     "default_icon": "bookmarks.png",

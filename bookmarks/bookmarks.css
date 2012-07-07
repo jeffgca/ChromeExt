@@ -7,8 +7,8 @@ tr.inner {
 }
 
 tr.sep {
-	background-color:black;
-	font-size:1px;
+	background-color: black;
+	font-size: 1px;
 }
 
 div.inner {
@@ -29,6 +29,7 @@ table.inner {
 	width: 240px;
 	padding: 0px;
 	border-spacing: 0px;
+	border-radius: 5px;
 }
 
 td {
@@ -43,3 +44,20 @@ td.img {
 tr {
 	vertical-align: top;
 }
+
+tr.inner:first-child td:first-child {
+    border-top-left-radius: 5px;    
+}
+
+tr.inner:first-child td:last-child {
+    border-top-right-radius: 5px;    
+}
+
+tr.inner:last-child td:first-child {
+    border-bottom-left-radius: 5px;    
+}
+
+tr.inner:last-child td:last-child {
+    border-bottom-right-radius: 5px;    
+}
+
