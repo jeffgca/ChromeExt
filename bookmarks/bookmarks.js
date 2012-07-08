@@ -44,10 +44,10 @@ function useBookmarks(xhr) {
 		tr.appendChild(td);
 		div = document.createElement("div");
 		td.appendChild(div);
-		div.setAttribute("class", "inner");
+		div.className = "inner";
 		table = document.createElement("table");
 		div.appendChild(table);
-		table.setAttribute("class", "inner");
+		table.className = "inner";
 
 		menuItem(table, "Add Bookmark", mouseDownAddText, null, "", true, getFavIcon("http://www.google.com"));
 		getLabels(xml, table);
@@ -57,8 +57,8 @@ function useBookmarks(xhr) {
 		tr.appendChild(td);
 		div = document.createElement("div");
 		td.appendChild(div);
-		div.setAttribute("class", "inner");
-		div.setAttribute("id", "submenu");
+		div.className = "inner";
+		div.id = "submenu";
 	}
 }
 
@@ -170,21 +170,21 @@ function getBookmarksForLabel(label) {
 
 function createSubMenu(label) {
 	var table = document.createElement("table");
-	table.setAttribute("class", "inner");
-	table.setAttribute("id", "subtable");
+	table.className = "inner";
+	table.id = "subtable";
 
 	var array = getBookmarksForLabel(label)
 
 	for (var i = 0; i < array.length; ++i) {
 		var tr = document.createElement("tr");
-		tr.setAttribute("class", "inner");
+		tr.className = "inner";
 		mouseDownBookmarkText(tr, array[i].url);
 		tr.addEventListener("mouseout", white);
 
 		var td = document.createElement("td");
-		td.setAttribute("class", "img");
+		td.className = "img";
 		var img = document.createElement("img");
-		img.setAttribute("src", getFavIcon(array[i].url));
+		img.src = getFavIcon(array[i].url);
 		td.appendChild(img);
 		tr.appendChild(td);
 
@@ -220,21 +220,21 @@ function menuItem(table, title, mousefunc, mouseparam, separator, lineseparator,
 		tdimgclass += " sep";
 	}
 	var tr = document.createElement("tr");
-	tr.setAttribute("class", "inner");
+	tr.className = "inner";
 	table.appendChild(tr);
 	var td = document.createElement("td");
 	tr.appendChild(td);
-	td.setAttribute("class", tdimgclass);
+	td.className = tdimgclass;
 	var img = document.createElement("img");
 	td.appendChild(img);
-	img.setAttribute("src", imgsrc);
+	img.src = imgsrc;
 	td = document.createElement("td");
 	tr.appendChild(td);
-	td.setAttribute("class", tdclass);
+	td.className = tdclass;
 	td.appendChild(document.createTextNode(title));
 	td = document.createElement("td");
 	tr.appendChild(td);
-	td.setAttribute("class", tdclass);
+	td.className = tdclass;
 	td.appendChild(document.createTextNode(separator));
 	mousefunc(tr, mouseparam);
 	tr.addEventListener("mouseout", white);
