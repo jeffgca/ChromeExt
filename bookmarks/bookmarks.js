@@ -25,6 +25,21 @@ function setBgColor(obj, on) {
 	obj.style.backgroundColor = color;
 }
 
+function addSeparator(tr) {
+	if (tr != null) {
+		var children = tr.childNodes;
+		for (var i = 0; i < children.length; ++i) {
+			node = children.item(i);
+			if (node.tagName.toLowerCase() == "td") {
+				if (node.className.length != 0) {
+					node.className += " ";
+				}
+				node.className += "sep";
+			}
+		}
+	}
+}
+
 function displayBookmarks() {
 	var xhr = new XMLHttpRequest();
 	xhr.open("GET", bookmarksXML, true);
@@ -49,9 +64,15 @@ function useBookmarks(xhr) {
 		div.appendChild(table);
 		table.className = "inner";
 
-		menuItem(table, "Add Bookmark", mouseDownAddText, null, "", true, getFavIcon("http://www.google.com"));
-		getLabels(xml, table);
-		getBookmarksWOLabels(xml, table);
+		var add = menuItem(table, "Add Bookmark", mouseDownAddText, null, "", true, getFavIcon("http://www.google.com"));
+		var lastLabel = getLabels(xml, table);
+		var woLab = getBookmarksWOLabels(xml, table);
+		if (woLab != null) {
+			addSeparator(lastLabel);
+		}
+		if (woLab != null || lastLabel != null) {
+			addSeparator(add);
+		}
 
 		td = document.createElement("td");
 		tr.appendChild(td);
@@ -81,16 +102,19 @@ function getLabels(xml, table) {
 	}
 	array = array.sort(localesort);
 	var linesep = false;
+	var ret = null;
 	for (var i = 0; i < array.length; ++i) {
 		if (i == array.length - 1) {
 			linesep = true;
 		}
-		menuItem(table, array[i], mouseDownLabelText, array[i], ">", linesep, "folder.png");
+		ret = menuItem(table, array[i], mouseDownLabelText, array[i], ">", linesep, "folder.png");
 	}
+	return ret;
 }
 
 function getBookmarksWOLabels(xml, table) {
 	var nodes = xml.getElementsByTagName("bookmark");
+	var ret = null;
 	for (var i = 0; i < nodes.length; ++i) {
 		var label = nodes[i].getElementsByTagName("label");
 		if (label[0] == null) {
@@ -106,9 +130,10 @@ function getBookmarksWOLabels(xml, table) {
 			} else {
 				titlet = urlt;
 			}
-			menuItem(table, titlet, mouseDownBookmarkText, urlt, "", false, getFavIcon(urlt));
+			ret = menuItem(table, titlet, mouseDownBookmarkText, urlt, "", false, getFavIcon(urlt));
 		}
 	}
+	return ret;
 }
 
 function bookmarkSelection(event, par) {
@@ -213,31 +238,24 @@ function mouseDownAddText(item, par) {
 }
 
 function menuItem(table, title, mousefunc, mouseparam, separator, lineseparator, imgsrc) {
-	var tdclass = "";
-	var tdimgclass = "img";
-	if (lineseparator) {
-		tdclass += "sep";
-		tdimgclass += " sep";
-	}
 	var tr = document.createElement("tr");
 	tr.className = "inner";
 	table.appendChild(tr);
 	var td = document.createElement("td");
 	tr.appendChild(td);
-	td.className = tdimgclass;
+	td.className = "img";
 	var img = document.createElement("img");
 	td.appendChild(img);
 	img.src = imgsrc;
 	td = document.createElement("td");
 	tr.appendChild(td);
-	td.className = tdclass;
 	td.appendChild(document.createTextNode(title));
 	td = document.createElement("td");
 	tr.appendChild(td);
-	td.className = tdclass;
 	td.appendChild(document.createTextNode(separator));
 	mousefunc(tr, mouseparam);
 	tr.addEventListener("mouseout", white);
+	return tr;
 }
 
 function addCallback(tab) {
