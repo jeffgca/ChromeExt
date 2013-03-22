@@ -3,6 +3,7 @@ var export_url = "index.php/apps/bookmarks/export.php";
 var doc;
 var favicon = "chrome://favicon/";
 var config = "config.html";
+var skip_bracks;
 
 function getFavIcon(url) {
 	return favicon + url;
@@ -44,6 +45,7 @@ function addSeparator(tr) {
 
 function displayBookmarks() {
 	main_url = localStorage["ocb_url"];
+	skip_bracks = localStorage["ocb_bracks"] == '1';
 	if (!main_url.length || main_url == "undefined") {
 		showURL(config);
 	}
@@ -104,7 +106,9 @@ function getLabels(table) {
 	for (var i = 0; i < nodes.length; ++i) {
 		var label = nodes[i].getAttribute('tags');
 		if (label.length) {
-			label = label.substr(1, label.length - 2);
+			if (skip_bracks) {
+				label = label.substr(1, label.length - 2);
+			}
 			var labels = label.split(',');
 			for (var j = 0; j < labels.length; ++j) {
 				set[labels[j]] = true;
@@ -178,7 +182,9 @@ function getBookmarksForLabel(label) {
 
 	for (var i = 0; i < nodes.length; ++i) {
 		var lab = nodes[i].getAttribute('tags');
-		lab = lab.substr(1, lab.length - 2);
+		if (skip_bracks) {
+			lab = lab.substr(1, lab.length - 2);
+		}
 		var labels = lab.split(',');
 		for (var j = 0; j < labels.length; ++j) {
 			if (labels[j] == label) {
