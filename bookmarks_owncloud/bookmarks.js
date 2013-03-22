@@ -46,7 +46,7 @@ function addSeparator(tr) {
 function displayBookmarks() {
 	main_url = localStorage["ocb_url"];
 	skip_bracks = localStorage["ocb_bracks"] == '1';
-	if (!main_url.length || main_url == "undefined") {
+	if (main_url == null || !main_url.length) {
 		showURL(config);
 	}
 	var xhr = new XMLHttpRequest();
@@ -92,7 +92,7 @@ function displayBookmarks() {
 		div.className = "inner";
 		div.id = "submenu";
 	} else {
-		showError(xhr.target.statusText);
+		showError(xhr.statusText);
 	}
 }
 

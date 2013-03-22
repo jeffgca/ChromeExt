@@ -1,6 +1,9 @@
 function start() {
 	var input = document.getElementById("url");
-	input.value = localStorage["ocb_url"];
+	var url = localStorage["ocb_url"];
+	if (url != null) {
+		input.value = url;
+	}
 	input = document.getElementById("skip");
 	input.checked = localStorage["ocb_bracks"] == '1'
 	var form = document.getElementById("form");
@@ -9,7 +12,11 @@ function start() {
 
 function handleClick(event) {
 	var input = document.getElementById("url");
-	localStorage["ocb_url"] = input.value;
+	var url = input.value;
+	if (url[url.length - 1] != '/') {
+		url = url + "/";
+	}
+	localStorage["ocb_url"] = url;
 	input = document.getElementById("skip");
 	if (input.checked) {
 		localStorage["ocb_bracks"] = '1';
