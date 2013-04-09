@@ -10,11 +10,11 @@ function getFavIcon(url) {
 }
 
 function blue(event) {
-	setBgColor(event.target, true);
+	return setBgColor(event.target, true);
 }
 
 function white(event) {
-	setBgColor(event.target, false);
+	return setBgColor(event.target, false);
 }
 
 function setBgColor(obj, on) {
@@ -26,6 +26,7 @@ function setBgColor(obj, on) {
 		color = 'lightblue';
 	}
 	obj.style.backgroundColor = color;
+	return obj;
 }
 
 function addSeparator(tr) {
@@ -69,6 +70,7 @@ function displayBookmarks() {
 		var td = document.createElement("td");
 		tr.appendChild(td);
 		div = document.createElement("div");
+		div.id = "leftmenu";
 		td.appendChild(div);
 		div.className = "inner";
 		table = document.createElement("table");
@@ -154,13 +156,23 @@ function bookmarkSelection(event, par) {
 }
 
 function labelSelection(event, par) {
-	blue(event);
+	obj = blue(event);
 	var sm = document.getElementById("submenu");
+	var lm = document.getElementById("leftmenu");
 	var j = document.getElementById("subtable");
 	if (j != null) {
 		sm.removeChild(j);
 	}
 	sm.appendChild(createSubMenu(par));
+	sm.style.position = 'relative';
+	sm.style.top = '0px';	
+	var offset = obj.offsetTop - lm.scrollTop;
+	if (lm.offsetHeight < sm.offsetHeight + offset) {
+		offset -= sm.offsetHeight + offset - lm.offsetHeight;
+	}
+	if (offset >= lm.offsetTop) {
+		sm.style.top = '' + offset + 'px';
+	}
 }
 
 function labelClicked(event, par) {
