@@ -151,8 +151,12 @@ function getBookmarksWOLabels(table) {
 }
 
 function bookmarkSelection(event, par) {
-	chrome.tabs.create({url: par});
-	window.close();
+	if (!event || event.button != 1) {
+		chrome.tabs.create({url:par});
+		window.close();
+	} else {
+		chrome.tabs.create({url:par, active:false});
+	}
 }
 
 function labelSelection(event, par) {
