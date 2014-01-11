@@ -56,13 +56,20 @@ function displayBookmarks() {
 	if (xhr.status == 200) {
 		doc = document.createElement("div");
 		doc.innerHTML = xhr.responseText;
-		input = doc.getElementsByTagName("input");
-		var div = document.getElementById("towrite");
-		for (var i = 0; i < input.length; ++i) {
-			if (input[i].id == 'password') {
-				showURL(main_url);
+		if (xhr.getResponseHeader("Content-Disposition") == null) {
+			input = doc.getElementsByTagName("input");
+			for (var i = 0; i < input.length; ++i) {
+				if (input[i].id == 'password') {
+					showURL(main_url);
+				}
+			}
+			xhr.open("GET", main_url + export_url, false);
+			xhr.send();
+			if (xhr.status == 200) {
+				doc.innerHTML = xhr.responseText;
 			}
 		}
+		var div = document.getElementById("towrite");
 		var table = document.createElement("table");
 		div.appendChild(table);
 		var tr = document.createElement("tr");

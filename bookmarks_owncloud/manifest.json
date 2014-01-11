@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Owncloud Bookmarks",
-  "version": "0.4",
+  "version": "0.5",
   "description": "Provides convenient access to Owncloud Bookmarks.",
   "icons": {
     "128": "owncloudBookmark.png"
